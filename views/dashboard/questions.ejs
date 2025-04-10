@@ -1,0 +1,35 @@
+<div class="container-fluid container-fluid-custom pb-5 mb-5">
+    <div class="row mb-3">
+        <h1 class="h2 text-center mb-4">OR</h1>
+      <div class="col">
+        <div class="col d-flex justify-content-center align-items-center">
+          <h1 class="h3">Upload Your Resume</h1>
+        </div>
+      </div>
+    </div>
+  
+    <form action="/dashboard" method="POST" enctype="multipart/form-data" class="mx-auto" style="width: 80%; margin-left: 10%; margin-right: 10%;">
+  
+      <div class="form-group mb-2">
+        <input type="file" class="form-control" id="resume" name="resume" required>
+      </div>
+  
+      <div class="form-group">
+        <button type="submit" class="btn btn-primary ">Get Questions</button>
+      </div>
+    </form>
+
+    <div class="mt-4">
+        <textarea class="form-control"  name="questions" id="question" placeholder="Interview questions will be displayed here" rows="3" style="width: 80%; margin-left: 10%; margin-right: 10%;"><%= question %></textarea>
+    </div>
+
+    <form action="/dashboard/evaluate" method="POST" class="mx-auto" style="width: 80%; margin:1%">
+      <div class="form-group" style="margin-bottom: 1%;">
+          <textarea class="form-control" name="answer" id="answer" placeholder="Enter Your Answer here" rows="10" style="width: 100%; margin-top: 1%;" required></textarea>
+      </div>
+
+      <div class="form-group">
+          <button type="submit" class="btn btn-primary ">Evaluate</button>
+      </div>
+  </form>
+  </div>
