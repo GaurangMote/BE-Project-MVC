@@ -1,0 +1,21 @@
+<h2>Interview Session Report</h2>
+<table class="table table-bordered mt-3">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Question</th>
+      <th>Answer</th>
+      <th>Score</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% interactions.forEach((item, index) => { %>
+      <tr>
+        <td><%= index + 1 %></td>
+        <td><%= item.question %></td>
+        <td><%= item.answer %></td>
+        <td><%= item.score !== null ? item.score : "Pending" %></td>
+      </tr>
+    <% }); %>
+  </tbody>
+</table>

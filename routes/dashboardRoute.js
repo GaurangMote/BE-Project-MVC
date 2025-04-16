@@ -12,6 +12,8 @@ var question = "";
 let score = 0;
 let count = 0;
 var pdfText = "";
+var jobText = "";
+var location = "";
 
 //Routes
 router.get('/',dashboardCtrl.dashboard);
@@ -35,6 +37,14 @@ router.post('/', upload.single('resume'), async (req, res) => {
         const pdfData = await pdfParse(dataBuffer);
 
         pdfText = pdfData.text;
+
+        // await axios.post('http://10.10.14.172:5002/question', {
+        //     resume: pdfText,
+        //     username : "Anish"
+        // });
+
+        // var response = await axios.get('http://10.10.14.172:5002/question/Anish/56');
+
         // console.log('Two');
         const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash"});
         var header = "Provide me a question based on any one topic from the resume data(Only provide the question)\n ";
@@ -43,7 +53,12 @@ router.post('/', upload.single('resume'), async (req, res) => {
         var response = await result.response;
         question = response.text();
         // console.log('Three');
-        
+
+        // const apiData = response.data.data;
+
+        // Do something with the retrieved data
+        // console.log('Received data:', apiData);
+
         const locals = {
             title : 'Get Questions',
             description: 'Interview',
@@ -90,6 +105,28 @@ router.post('/evaluate', async (req, res) => {
         var followUpResponse = await followUpResult.response;
         question = followUpResponse.text();
 
+        // if (!req.session) {
+        //     req.session = {}; // in rare cases where session middleware fails
+        // }
+        
+        // if (!req.session.interaction) {
+        //     req.session.interaction = [];
+        // }
+
+        // const interaction = req.session.interaction;
+        // interaction[interaction.length - 1].question = question;
+        // interaction[interaction.length - 1].answer = userAnswer;
+        // interaction[interaction.length - 1].Score = score;
+
+        // Push new question for next round
+        // interaction.push({
+        //     question: question,
+        //     answer: userAnswer,
+        //     Score: score
+        // });
+
+        // req.session.interaction = interaction;
+
         const locals = {
             title : 'Get Questions',
             description: 'Interview',
@@ -103,6 +140,50 @@ router.post('/evaluate', async (req, res) => {
     } catch (error) {
         console.error('Error processing evaluation:', error);
         res.status(500).send('Error evaluating answer');
+    }
+});
+
+router.get('/report', (req, res) => {
+    const interactions = req.session.interaction || [];
+
+    res.render('dashboard/report', {
+        interactions,
+        layout: '../views/layouts/dashboard',
+        title: 'Interview Report'
+    });
+});
+
+router.post('/jobs', async (req, res) => {
+    try {
+        location = req.body.location;
+
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+        const jobPrompt = `Given the resume below:\n${pdfText}\nAnd the preferred job location: "${location}", suggest 5 job roles in companies in this format\n Web Developer at Dreams International
+        Location: Swargate, Pune\n
+        Experience: 1-2 years\n
+        Salary: ₹20,000-₹25,000/month \nsuitable for the candidate. Just provide the job details and don't generate anything else.`;
+
+        const jobResult = await model.generateContent(jobPrompt);
+        const jobResponse = await jobResult.response;
+        jobs = jobResponse.text();
+
+        const locals = {
+            title: 'Job Suggestions',
+            description: 'Resume + Location based Jobs'
+        };
+
+        res.render('dashboard/questions', {
+            locals,
+            question,
+            jobs,
+            location,
+            layout: '../views/layouts/dashboard'
+        });
+
+    } catch (error) {
+        console.error('Error generating job suggestions:', error);
+        res.status(500).send('Failed to generate job suggestions.');
     }
 });
 

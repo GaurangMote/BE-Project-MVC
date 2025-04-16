@@ -13,6 +13,16 @@
       <div class="form-group mb-2">
         <input type="file" class="form-control" id="resume" name="resume" required>
       </div>
+
+      <div class="col">
+        <div class="col d-flex justify-content-center align-items-center">
+          <h1 class="h3">Upload Job Description</h1>
+        </div>
+      </div>
+
+      <div class="form-group mb-2">
+        <input type="file" class="form-control" id="job-description" name="job-description" placeholder="Upload Job Description">
+      </div>
   
       <div class="form-group">
         <button type="submit" class="btn btn-primary ">Get Questions</button>
@@ -23,6 +33,12 @@
         <textarea class="form-control"  name="questions" id="question" placeholder="Interview questions will be displayed here" rows="3" style="width: 80%; margin-left: 10%; margin-right: 10%;"><%= question %></textarea>
     </div>
 
+    <div class="text-center my-2">
+      <button type="button" class="btn btn-primary  " id="micButton">
+          <i class="fas fa-microphone"></i>
+      </button>
+    </div>
+
     <form action="/dashboard/evaluate" method="POST" class="mx-auto" style="width: 80%; margin:1%">
       <div class="form-group" style="margin-bottom: 1%;">
           <textarea class="form-control" name="answer" id="answer" placeholder="Enter Your Answer here" rows="10" style="width: 100%; margin-top: 1%;" required></textarea>
@@ -31,5 +47,68 @@
       <div class="form-group">
           <button type="submit" class="btn btn-primary ">Evaluate</button>
       </div>
-  </form>
+
+      <form action="/dashboard/report" method="GET">
+        <button class="btn btn-success mt-3" type="submit">Get Report</button>
+      </form>
+    </form>
+
+    
+
+    <form action="/dashboard/jobs" method="POST" class="mx-auto" style="width: 80%; margin:1%">
+      <div class="col">
+        <div class="col d-flex justify-content-center align-items-center">
+          <h1 class="h3">Enter Preferred Job Location for Suggestions</h1>
+        </div>
+      </div>
+  
+      <div class="mt-4">
+        <textarea class="form-control"  name="location" id="location" placeholder="Enter Location here" rows="1" style="width: 80%; margin-left: 10%; margin-right: 10%;" required></textarea>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 1%;">
+          <textarea class="form-control" name="jobs" id="jobs" placeholder="Job Suggestions will appear here" rows="10" style="width: 100%; margin-top: 1%;"><%= jobs %></textarea>
+      </div>
+
+      <div class="form-group">
+          <button type="submit" class="btn btn-primary ">Find Jobs</button>
+      </div>
+    </form>
+  
   </div>
+
+  <script>
+    const micButton = document.getElementById("micButton");
+    const answerTextarea = document.getElementById("answer");
+  
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  
+    if (SpeechRecognition) {
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.lang = "en-US";
+      recognition.interimResults = false;
+  
+      micButton.addEventListener("click", () => {
+        recognition.start();
+        micButton.classList.add("btn-danger"); // Show active mic
+      });
+  
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        answerTextarea.value += transcript + " ";
+      };
+  
+      recognition.onend = () => {
+        micButton.classList.remove("btn-danger");
+      };
+  
+      recognition.onerror = (event) => {
+        alert("Error: " + event.error);
+        micButton.classList.remove("btn-danger");
+      };
+    } else {
+      alert("Speech Recognition not supported in this browser.");
+      micButton.disabled = true;
+    }
+  </script>  
