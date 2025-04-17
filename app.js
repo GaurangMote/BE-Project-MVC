@@ -5,6 +5,14 @@ const session = require('express-session');
 require('dotenv').config();
 
 const app = express();
+
+app.use(session({
+    secret: 'FGnOIHHFjqo',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false } // Use true only in HTTPS
+  }));
+
 const PORT =  process.env.PORT || 3000;
 
 dbConnect(); // Connect to MongoDB
@@ -23,14 +31,6 @@ app.set('view engine', 'ejs');
 app.use('/',require('./routes/indexRoute'));
 app.use('/dashboard',require('./routes/dashboardRoute'));
 app.use('/auth',require('./routes/userRoute'));
-
-//Session Middleware
-app.use(session({
-    secret: 'FGnOIHHFjqo',
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false } // Set `true` if using HTTPS
-}));
 
 //Handle Not Found - 404
 app.get('*', function(req, res) {

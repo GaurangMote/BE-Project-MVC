@@ -1,21 +1,32 @@
-<h2>Interview Session Report</h2>
-<table class="table table-bordered mt-3">
-  <thead>
-    <tr>
-      <th>#</th>
-      <th>Question</th>
-      <th>Answer</th>
-      <th>Score</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% interactions.forEach((item, index) => { %>
-      <tr>
-        <td><%= index + 1 %></td>
-        <td><%= item.question %></td>
-        <td><%= item.answer %></td>
-        <td><%= item.score !== null ? item.score : "Pending" %></td>
-      </tr>
-    <% }); %>
-  </tbody>
-</table>
+<%- include('../partials/header') %>
+
+<div class="container mt-5">
+    <h2 class="mb-4">Interview Report</h2>
+
+    <% if (questions.length === 0) { %>
+        <p>No data available for report.</p>
+    <% } else { %>
+        <table class="table table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Question</th>
+                    <th>Your Answer</th>
+                    <th>Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for(let i = 0; i < questions.length; i++) { %>
+                    <tr>
+                        <td><%= i + 1 %></td>
+                        <td><%= questions[i] %></td>
+                        <td><%= answer[i] || '—' %></td>
+                        <td><%= typeof score[i] !== 'undefined' ? score[i] : '—' %></td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    <% } %>
+</div>
+
+<%- include('../partials/footer') %>
